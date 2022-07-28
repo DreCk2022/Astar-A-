@@ -1,0 +1,403 @@
+﻿
+public class Nodo //creacion de la clase Nodo
+{
+
+    public int dato;  //esta clase cuenta con un atributo publico dato donde se almacenará el valor
+    public Nodo enlace; //cuenta con un atributo público enlace, que apunta al nodo siguiente
+
+    public void Inicializar(int valor) //se inicializa el nodo dandole un valor para el dato
+    {
+        dato = valor;  //ahora el dato es igual al valor ingresado
+        enlace = null; //su en enlace es nulo (no apunta a nada)
+
+    }
+
+
+}
+
+public class Cola  //creacion de la clase Cola
+{
+    Nodo frente = new Nodo();  //cuenta con un atributo frente, que es un nodo que apunta al frente de la cola
+    Nodo ultimo = new Nodo(); //cuenta con un atributo ultimo, que es un nodo que apunta al final de la cola
+
+    public void Iniciar()  //inicilización de la Cola
+    {
+        frente = null;   //se iniciliza la cola, frente apunta a nulo
+        ultimo = null;  //el ultimo nodo también apunta a nulo 
+    }
+    public bool estaVacia()    //método que permite saber si la cola esta vacia o no
+    {
+        if (frente == null) //si el frente apunta a nulo, entonces:
+        {
+            return true;  //la cola esta vacia
+        }
+        else
+        {
+            return false;  //sino, la cola no esta vacia
+        }
+    }
+
+
+    public void encolar(int valor)  //método que nos permite encolar un nuevo valor a la cola
+    {
+        if (estaVacia() == true)  //si la cola esta vacia entonces: 
+        {
+            Nodo nodo = new Nodo();  //se crea un nuevo nodo
+            nodo.Inicializar(valor); //se inicializa el nodo con el nuevo valor
+            frente = nodo; //el frente de la cola es el nodo
+            ultimo = nodo; //el ultimo elemento de la cola también sera este nuevo nodo 
+        }
+        else  //si no esta vacia la cola entonces: 
+        {
+            Nodo nodo = new Nodo();  //se crea un nuevo nodo
+            nodo.Inicializar(valor);//se inicializa el nodo con el nuevo valor
+            ultimo.enlace = nodo;//el ultimo elemento de la cola ahora apunta al nuevo nodo
+            ultimo = nodo; //ahora el ultimo elemento de la cola es el nuevo nodo 
+        }
+    }
+
+    public int desencolar() //método que nos permite desencolar el primer elemento(el frente) de la cola
+    {
+
+        if (estaVacia() == false) //si la cola no esta vacia
+        {
+            int item = frente.dato;  //el valor a desencolar es el el dato del nodo "frente"
+            frente = frente.enlace; //ahora el frente de la cola, es donde apuntaba el primer frente de esta
+            return item; //ahora retornamos el item que se ha desencolado 
+        }
+        else
+        {
+            return -1000;  //si la cola no esta vacia retornamos este valor negativo 
+        }
+    }
+
+    public void Mostrar()  //metodo que nos permite mostrar la cola en pantalla
+    { 
+        Nodo temp = frente;  //creamos un nodo que apunte a donde a punta el nodo frente de la cola
+        while (temp != null) //mientras que este nodo temporal sea diferente de nulo
+        {
+            Console.Write(temp.dato + " "); //se muestra en pantalla el dato del nodo 
+            temp = temp.enlace; //ahora el nodo temporal apunta al siguiente nodo 
+        }
+        Console.WriteLine(" ");
+    }
+
+
+
+}
+
+public class Grafo //creacion de la clase Grafo
+{
+    public int numVertices; //creamos un atributo que se refiera al número de vertices que tendra el grafo
+    public bool dirigido; //atributo que nos permite saber si el grafo es dirigido o no
+    int[,] matriz; //atributo que representa la matriz de adyacencia del grafo
+
+    public void IniciarGrafo(int numV, bool diri) //inicializamos el grafo, como parametros se coloca el numero de vertices y si es dirigido  o no
+    {
+        numVertices = numV; //ahora el numVertices es igual al numero ingreso
+        dirigido = diri; //ahora se sabe si el grafo es dirigio o no
+        matriz = new int[numVertices, numVertices]; //ahora se sabe que la matriz del grafo tiene numVertices filas y numVertices columnas
+        for (int f = 0; f < matriz.GetLength(0); f++) //se inicializa toda la matriz del grafo en 0
+        {
+            for (int c = 0; c < matriz.GetLength(1); c++)
+            {
+                matriz[f, c] = 0;  //cada valor de la matriz se coloca en 0 
+            }
+        }
+
+    }
+    public void ImprimirMatriz()   //metodo que nos permite imprimir la matriz de adyacencia del grafo
+    {
+        for (int f = 0; f < matriz.GetLength(0); f++)  //se recorre toda la matriz de adyacencia del grafo, mientras f sea menor que el numero de filas del grafo
+        {
+            for (int c = 0; c < matriz.GetLength(1); c++) //mientras c sea menor que el numero de columnas del grafo
+            {
+                Console.Write(matriz[f, c] + " "); //se muestra en pantalla el numero de la matriz en la posición (f,c)
+            }
+            Console.WriteLine("");
+        }
+
+    }
+
+    public void agregarArco(int verticeInicial, int verticeFinal, int peso) //metodo que nos permite conectar dos vertices (agregar un arco al grafo)
+    {
+        if (dirigido == true) //si el grafo es dirigido entonces:
+        {
+            matriz[verticeInicial, verticeFinal] = peso; //el grafo genera un arco solamente de ida desde el verticeInicial hasta el verticeFinal
+        }
+        else  //#si el grafo es no dirigido 
+        {
+            matriz[verticeInicial, verticeFinal] = peso; //el grafo en genera un arco de ida desde el verticeInicial hasta el verticeFinal.
+                                                         //En la matriz se agrega en esa posicion el peso del arco 
+
+            matriz[verticeFinal, verticeInicial] = peso; //este mismo arco es uno de ida y vuelta (desde verticeFinal ha verticeInicial)
+                                                         //.En la matriz se agrega en esa posicion el peso del arco 
+        }
+    }
+
+    public int grado(int vertice) //método que nos permite calcular el grado de un vertice (numero de aristas incidentes en el)
+    {
+        if (dirigido == false) //si el grafo no es dirgido entonces:
+        {
+            int temp = 0; //creamos una variable temp igual a 0 que nos permitira contar el numero de estas aristas incidentes
+            for (int i = 0; i < numVertices; i++) //se recorre toda la matriz de adyacencia del grafo segun el vertice
+            {
+                if (matriz[i, vertice] != 0) //si hay un numero diferente de 0 entonces:
+                {
+                    temp = temp + 1; //sumamos nuestra variable temp mas uno (Hemos encontrado un arista incidente)
+                }
+            }
+            return temp; //se retorna el valor hallado 
+        }
+        else
+        {
+            return -100000; //si es dirigido y se usa esta funcion se devolvera un numero negativo
+        }
+    }
+
+    //#la funcion anterior solo se ejecutara si el grafo es no dirigido
+    //, en caso sea dirigido tenemos dos tipos de grado: de entrada y de salida
+
+    public int gradoEntrada(int vertice) //método para hallar el grado de Entrada de un vertice en un grafo dirigido 
+    {
+        if (dirigido == true) //si el grafo si es dirigido:
+        {
+            int temp = 0; //creamos una variable temp igual a 0 que nos permitira contar el numero de estas aristas incidentes (aristas que ingresan al grafo)
+            for (int i = 0; i < numVertices; i++) //se recorre toda la matriz de adyacencia del grafo segun el vertice
+            {
+                if (matriz[i, vertice] != 0) //si desde un vertice hacia el verticeDeseado hay un numero diferente de 0 en la matriz entonces:
+                {
+                    temp = temp + 1; //sumamos nuestra variable temp mas uno (Hemos encontrado un arista incidente)
+                }
+            }
+            return temp; //se retorna el valor hallado 
+
+
+        }
+        else
+        {
+            return -10000;  //si es no dirigido y se usa esta funcion se devolvera un numero negativo
+        }
+
+    }
+
+    public int gradoSalida(int vertice) //método para hallar el grado de Salida de un vertice en un grafo dirigido 
+    {
+        if (dirigido == true) //si el grafo si es dirigido
+        {
+            int temp = 0; //creamos una variable temp igual a 0 que nos permitira contar el numero de estas aristas incidentes (aristas que salen del grafo)
+            for (int i = 0; i < numVertices; i++) //se recorre toda la matriz de adyacencia del grafo segun el vertice
+            {
+                if (matriz[vertice, i] != 0) //si desde el verticeDeseado hacia otro vertice hay un numero diferente de 0 en la matriz entonces:
+                {
+                    temp = temp + 1; //sumamos nuestra variable temp mas uno (Hemos encontrado un arista saliente)
+                }
+            }
+            return temp; //se retorna el valor hallado 
+        }
+        else
+        {
+            return -100000; //si es no dirigido y se usa esta funcion se devolvera un numero negativo
+        }
+
+    }
+
+    public int[] adyacentes(int vertice) //método que nos devuelve un array con todos los vertices adyacentes al vertice dado
+    {
+        int numAdyacentes = 0; //una variable que se inicializa en 0, buscaremos los vertices adyacentes del vertice ingresado
+        if (dirigido == true) //si el grafo es dirigido entonces:
+        {
+            numAdyacentes = gradoSalida(vertice); //la cantidad de numeros adyacentes es igual al numero retornada por él método gradoSalida del vertice
+        }
+        else //en caso el grafo sea no dirigido
+        {
+            numAdyacentes = grado(vertice); //la cantidad de numeros adyacentes es igual al numero retornoda por el método grado del vertice
+        }
+        int j = 0;   //creamos un contador que nos permitira agregar un nuevo valor al array
+        int[] temp = new int[numAdyacentes]; //creamos un array llamado temp, su tamaño es igual a la cantidad de adyacentes del vertice
+        for (int i = 0; i < numVertices; i++) //si se recorre la matriz del grafo segun el vertice
+        {
+            if (matriz[vertice, i] != 0)  //si desde el verticeDeseado hacia otro vertice hay un numero diferente de 0 en la matriz entonces:
+            {
+                temp[j] = i; //en el array en la posición j se agrega el vertice adyacente encontrado
+                j = j + 1; //ahora la posicion se suma más uno
+            }
+        }
+        return temp; //se devuelve un array con lo vertices adyacentes del vertice solicitado
+
+    }
+
+    public void BFSaux(int verticePartida, bool[] visitados) //creamos un mé´todo de apoyo de BFS, recibe como parametros un vertice del grafo y array de booleanos
+    {
+        Cola q = new Cola(); //inicializamos una cola
+        q.encolar(verticePartida); //el primer elemento a recorrer será el vertice partida dado, y se encola a la cola
+        Console.Write(verticePartida + " "); //se imprime el vertice dado
+        visitados[verticePartida] = true; //se coloca en nuestro array de visitados que ya ha asido recorrido
+        while (q.estaVacia() != true) //mientras la cola no este vacia:
+        {
+
+            int v = q.desencolar(); //se desencola el primer elemento de la cola (el frente)
+            for (int i = 0; i < adyacentes(v).Length; i++) //se busca los adyacentes del vertice v
+            {
+                if (visitados[adyacentes(v)[i]] != true) //i el adyacente no ha sido visitado, entonces:
+                {
+                    Console.Write(adyacentes(v)[i] + " "); //se imprime el vertice adyacente 
+                    visitados[adyacentes(v)[i]] = true; //se cola en nuestro array de booleanos que ya ha sido visitado
+                    q.encolar(adyacentes(v)[i]); //se agrega el vertice adyacente a nustra cola de pendientes
+                }
+            }
+
+        }
+    }
+
+    public void BFS(int verticePartida) //ALGORITMO DE BUSQUEDA POR ANCHURA 
+    {
+        bool[] visitados = new bool[numVertices]; //Se crea un array de booleanos para ver si los vertices han sido visitados o no
+        for (int i = 0; i < numVertices; i++) //se inicializa el array 
+        {
+            visitados[i] = false; // todos los vertices se les coloca como no recorridos en el array
+        }
+        BFSaux(verticePartida, visitados); //se manda a recorrer el verticedePartida dado mediante nuestro método auxiliar
+        for (int i = 0; i < numVertices; i++) //por cada vertice del grafo
+        {
+            if (visitados[i] != true) //si el vertice no ha sido recorrido, entonces:
+            {
+                BFSaux(i, visitados); //se le manda a ejecutar nuestra funcion BFS aux
+            }
+        }
+        //Fin de recorrido/busqueda por anchura
+    }
+
+    public int CostoT(int verticePartida, int verticeAdyacente, int[] valoresH) //método de CostoT, nos permite calcular el costo de un vertice dado hacia otro vertice, según el peso de la arista y los valores heurísticos dados
+    {
+        int costoH = valoresH[verticeAdyacente]; //se obtiene el costo heuristico del verticeAdyacente
+        int total = costoH + matriz[verticePartida, verticeAdyacente]; //su costo total es la suma del valor heuristico más el peso encontrado en la matriz de adyacencia 
+
+        return total; //se retorna el costo total calculado
+    }
+
+
+    public void Aestrella(int verticePartida, int verticeFinal, int[] valoresH) //se crea la funcion que nos permite hacer el recorrido A estrella
+    {
+        int[] closelistVertices = new int[numVertices]; //se crea un array llamado lista de vertices cerrada (se almacenan los vertices que se van a recorrer)
+        int[] closelistCostos = new int[numVertices]; //se crea un array llamado lista de costos cerrada (se almacenan los costos que se van a tener que tomar)
+        int[] openlistVertices = new int[numVertices]; //se crea un array llamado lista de vertices abierta (se almacenan los vertices que se van a comparar)
+        int[] openlistCostos = new int[numVertices]; //se crea un array llamado lista de costos abierta (se almacenan los costos que se van a comparar)
+        int contOpen = 0; //creamos una variable contador que nos permitirá saber la cantidad de valores en las listas abiertas
+        int contClose = 0; //creamos una variable contador que nos permitirá saber la cantidad de valores en las listas cerradas
+        bool[] visitados = new bool[numVertices];//se crea un array de booleanos del tamaño de la cantidad de vertices del grafo
+        for (int i = 0; i < numVertices; i++) //se recorre el array "visitados"
+        {
+            visitados[i] = false; //se llena (inicializa) el array con "falso"
+        }
+        visitados[verticePartida] = true; //en la posicion del verticePartida se coloca que ya ha sido visitado
+        closelistVertices[contClose] = verticePartida; //en nuestra lista cerrada se agrega el verticePartida, pues es el inicio del recorrido
+        int costouno = 0; //el primer costo sera cero
+        closelistCostos[contClose] = costouno; //a la lista costos cerrada se le agrega el costouno
+        contClose++;//ahora sumamos el contador de las listas cerradas (ahora cuentan con un valor)
+        int verticeAux = verticePartida; //ahora creamos una variable llamada verticeAux que sea igual al verticePartida
+        while (verticeAux != verticeFinal) //mientras que el verticeAux sea diferente al verticeFinal
+        {
+            for (int i = 0; i < adyacentes(verticeAux).Length; i++) //se recorre los adyacentes del verticeAux
+            {
+                if (visitados[adyacentes(verticeAux)[i]] == false) //si en nuestro array visitados el verticeAdyacente esta como "falso", osea  no visitado, entonces:
+                {
+                    openlistVertices[contOpen] = adyacentes(verticeAux)[i];//se agrega el vertice adyacente a la lista abierta de vertices
+                    int costo = CostoT(verticeAux, adyacentes(verticeAux)[i], valoresH);//se agrega el vertice adyacente a la lista abierta de vertices
+                    openlistCostos[contOpen] = costo; //se agrega el costo a la lista abierta de costos
+                    contOpen++; //ahora sumamos el contador de las listas abiertas (ahora cuentan con un valor más)
+                }
+
+            }
+
+            int min = openlistCostos[0]; //inicializamos el costo minimo
+            int sucesor = openlistVertices[0]; //inicializamos el sucesor a escoger
+            int pos = 0; //inicializamos la posicion del sucesor en la lista abierta
+            for (int i = 0; i < contOpen; i++) //recorremos toda la lista abierta de costos
+            {
+                if (openlistCostos[i] <= min) //si en la posicion i en la lista abierta de costos hay un valor mayor o igual al minimo entonces:
+                {
+                    if (openlistCostos[i] != min) //si en la lista abierta de costos en la posición i es diferente del minimo
+                    {
+                        min = openlistCostos[i]; //ahora el costo minimo es el valor encontrado en a lista abierta de costos en la posicion i 
+                        sucesor = openlistVertices[i]; //l vertice sucesor será el encontado en la lista abierta de vertices en la posicion i
+                        pos = i; //la posicion del sucer en las listas abiertas es i 
+                    }
+                }
+            }
+
+            closelistCostos[contClose] = min; //se agrega el valor del costo minimo encontrado a la lista de costos cerrada
+            closelistVertices[contClose] = sucesor; //se agrega el sucesor encontrado a la lista de vertices cerrada 
+            contClose++; ////ahora sumamos el contador de las listas cerradas (ahora cuentan con un valor más)
+
+            for (int i = 0; i < contOpen; i++) //recorremos las listas abiertas para colocar todos sus valores en "-1" --> inicilizamos las listas de nuevo
+            {
+                openlistCostos[i] = -1; //se colocan valores en -1 --> inicializamos lista
+                openlistVertices[i] = -1;//se colocan valores en -1 -> inicializamos lista
+
+            }
+
+            verticeAux = sucesor; //ahora el verticeAux es igual al sucesor
+            visitados[sucesor] = true; //colocamos en la posicion del sucesor en el array visitados "true", osea si ha sido  visitado
+            contOpen = 0; //ahora el contador de las listas abiertas se iniciliza también, lo colocamos en 0
+
+
+
+        }
+
+        Console.WriteLine("");
+        Console.WriteLine("Camino a Recorrer");
+        Console.WriteLine("");
+        for (int i = 0; i < contClose; i++) //recorremos la lista de vertices cerrada para imprimirla
+        {
+            Console.Write(closelistVertices[i] + " "); //imprimimos cada elemento de la lista
+        }
+        Console.WriteLine("");
+
+        //se mostró todo el recorrido A estrella
+
+    }
+
+
+
+
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        Grafo grafo = new Grafo();
+        grafo.IniciarGrafo(7, false);
+        grafo.agregarArco(0, 1, 4);
+        grafo.agregarArco(0, 2, 3);
+        grafo.agregarArco(1, 4, 12);
+        grafo.agregarArco(1, 5, 5);
+        grafo.agregarArco(2, 3, 7);
+        grafo.agregarArco(2, 4, 10);
+        grafo.agregarArco(3, 4, 2);
+        grafo.agregarArco(4, 6, 5);
+        grafo.agregarArco(5, 6, 16);
+        grafo.ImprimirMatriz();
+        Console.WriteLine("");
+        Console.WriteLine("Recorrido BFS: ");
+        grafo.BFS(0);
+        Console.WriteLine("");
+        int[] valoresH = new int[grafo.numVertices];
+        valoresH[0] = 0;
+        valoresH[1] = 0;
+        valoresH[2] = 0;
+        valoresH[3] = 0;
+        valoresH[4] = 0;
+        valoresH[5] = 0;
+        valoresH[6] = 0;
+
+        grafo.Aestrella(0, 6, valoresH);
+
+
+
+    }
+
+}
+
+
